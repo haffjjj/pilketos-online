@@ -33,7 +33,7 @@ class pilketos extends dbConfig{
 			$bindparam = array(':nis' => $nis);
 			$result = $this->connection->prepare($query);
 			$result->execute($bindparam);
-			$data = $result->fetch();
+			$data = $result->fetch(PDO::FETCH_ASSOC);
 
 			if ($result->rowCount() > 0) {
 				if (password_verify($password,$data['password'])) {
@@ -80,5 +80,61 @@ class pilketos extends dbConfig{
 	}
 }
 
+class pemilihan extends dbConfig{
+	public function cekpemilih(){
+		try{
+			$idsiswa = $_SESSION['id'];
+			$query = "SELECT * FROM pemilihan where idsiswa = :idsiswa";
+			$bindparam = array(':idsiswa' => $idsiswa);
+			$result = $this->connection->prepare($query);
+			$result->execute($bindparam);
+			if ($result->rowCount() > 0) {
+				return true;
+			}
+		}
+		catch (PDOException $e){
+			die("Koneksi error: " . $e->getMessage());
+		}
+	}
+
+	public function kanidat($id){
+		try{
+			$query = "SELECT * FROM kanidat where idkanidat = $id";
+			$result = $this->connection->prepare($query);
+			$result->execute();
+			$row = $result->fetch(PDO::FETCH_ASSOC);
+			return $row;
+		}
+		catch (PDOException $e){
+			die("Koneksi error: " . $e->getMessage());
+		}
+	}
+
+	public function masukanSuara($idkanidat){
+		try{
+			$idsiswa = $_SESSION['id'];
+			$datetime = date("Y-m-d H:i:s");
+			$query = "INSERT INTO pemilihan VALUES('',:idsiswa,:idkanidat,:dtime)";
+			$result = $this->connection->prepare($query);
+			$bindParam = array(":idsiswa" => $idsiswa,":idkanidat" =>$idkanidat,":dtime" =>$datetime);
+			$result->execute($bindParam);
+			return true;
+		}
+		catch (PDOException $e){
+			die("Koneksi error: " . $e->getMessage());
+		}
+	}
+
+	public function hasil($idkanidat){
+		$query = "SELECT * FROM pemilihan where idkanidat = :idkanidat";
+		$bindparam = array(':idkanidat' => $idkanidat);
+		$result = $this->connection->prepare($query);
+		$result->execute($bindparam);
+		$hasil = $result->rowCount();
+		return $hasil;
+	}
+}
+
 $pilketos = new pilketos();
+$pemilihan = new pemilihan();
 ?>
