@@ -1,27 +1,7 @@
 <?php
-class dbConfig
-{
-	private $dbDriver = "mysql";
-	private $host = "localhost";
-	private $username = "root";
-	private $password = "";
-	private $database = "db_pilketos";
+require_once ("dbConfig.php");
 
-	protected $connection;
-	protected $error;
-
-	public function __construct(){
-		try{
-			$this->connection = new PDO($this->dbDriver.':host='.$this->host.';dbname='.$this->database,$this->username,$this->password);
-			$this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		}
-		catch (PDOException $e){
-			die("Koneksi error: " . $e->getMessage());
-		}
-	}
-}
-
-class pilketos extends dbConfig{
+class user extends dbConfig{
 	public function __construct(){
 		parent::__construct();
 		session_start();
@@ -30,14 +10,14 @@ class pilketos extends dbConfig{
 	public function login($nis,$password){
 		try{
 			$query = "SELECT * FROM siswa where nis = :nis";
-			$bindparam = array(':nis' => $nis);
+			$data = array(':nis' => $nis);
 			$result = $this->connection->prepare($query);
-			$result->execute($bindparam);
+			$result->execute($data);
 			$data = $result->fetch(PDO::FETCH_ASSOC);
 
 			if ($result->rowCount() > 0) {
 				if (password_verify($password,$data['password'])) {
-					$_SESSION['id'] = $data['idsiswa'];
+					$_SESSION['idsiswa'] = $data['id'];
 					$_SESSION['nis'] = $data['nis'];
 					$_SESSION['nama'] = $data['nama'];
 					$_SESSION['kelas'] = $data['kelas'];
@@ -63,7 +43,7 @@ class pilketos extends dbConfig{
 	}
 
 	public function cekLogin(){
-		if (isset($_SESSION['id'])) {
+		if (isset($_SESSION['idsiswa'])) {
 			return true;
 		}
 	}
@@ -81,13 +61,16 @@ class pilketos extends dbConfig{
 }
 
 class pemilihan extends dbConfig{
+	public function __construct(){
+		parent::__construct();
+	}
 	public function cekpemilih(){
 		try{
-			$idsiswa = $_SESSION['id'];
+			$idsiswa = $_SESSION['idsiswa'];
 			$query = "SELECT * FROM pemilihan where idsiswa = :idsiswa";
-			$bindparam = array(':idsiswa' => $idsiswa);
+			$data = array(':idsiswa' => $idsiswa);
 			$result = $this->connection->prepare($query);
-			$result->execute($bindparam);
+			$result->execute($data);
 			if ($result->rowCount() > 0) {
 				return true;
 			}
@@ -99,9 +82,10 @@ class pemilihan extends dbConfig{
 
 	public function kanidat($id){
 		try{
-			$query = "SELECT * FROM kanidat where idkanidat = $id";
+			$query = "SELECT * FROM kanidat where id = :id";
 			$result = $this->connection->prepare($query);
-			$result->execute();
+			$data = array(':id' => $id);
+			$result->execute($data);
 			$row = $result->fetch(PDO::FETCH_ASSOC);
 			return $row;
 		}
@@ -110,14 +94,14 @@ class pemilihan extends dbConfig{
 		}
 	}
 
-	public function masukanSuara($idkanidat){
+	public function masukanSuara($id){
 		try{
-			$idsiswa = $_SESSION['id'];
+			$idsiswa = $_SESSION['idsiswa'];
 			$datetime = date("Y-m-d H:i:s");
 			$query = "INSERT INTO pemilihan VALUES('',:idsiswa,:idkanidat,:dtime)";
 			$result = $this->connection->prepare($query);
-			$bindParam = array(":idsiswa" => $idsiswa,":idkanidat" =>$idkanidat,":dtime" =>$datetime);
-			$result->execute($bindParam);
+			$data = array(":idsiswa" => $idsiswa,":idkanidat" =>$id,":dtime" =>$datetime);
+			$result->execute($data);
 			return true;
 		}
 		catch (PDOException $e){
@@ -125,16 +109,20 @@ class pemilihan extends dbConfig{
 		}
 	}
 
-	public function hasil($idkanidat){
-		$query = "SELECT * FROM pemilihan where idkanidat = :idkanidat";
-		$bindparam = array(':idkanidat' => $idkanidat);
-		$result = $this->connection->prepare($query);
-		$result->execute($bindparam);
-		$hasil = $result->rowCount();
-		return $hasil;
+	public function hasil($id){
+		try{
+			$query = "SELECT * FROM pemilihan where idkanidat = :id";
+			$data = array(':id' => $id);
+			$result = $this->connection->prepare($query);
+			$result->execute($data);
+			$hasil = $result->rowCount();
+			return $hasil;
+		}
+		catch (PDOException $e){
+			die("Koneksi error: " . $e->getMessage());
+		}
 	}
 }
-
-$pilketos = new pilketos();
+$user = new user();
 $pemilihan = new pemilihan();
 ?>

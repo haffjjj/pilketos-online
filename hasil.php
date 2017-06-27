@@ -1,5 +1,6 @@
 <?php
-require_once("lib/class.php");
+require_once("lib/user.php");
+
 $urut1 =  $pemilihan->hasil(1);
 $urut2 =  $pemilihan->hasil(2);
 $urut3 =  $pemilihan->hasil(3);

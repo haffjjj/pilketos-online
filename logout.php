@@ -1,5 +1,5 @@
 <?php
-require_once("lib/class.php");
-$pilketos->logout();
+require_once("lib/user.php");
+$user->logout();
 header("location: index.php");
 ?>

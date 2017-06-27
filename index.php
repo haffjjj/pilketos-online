@@ -1,18 +1,18 @@
 <?php
-require_once("lib/class.php");
-if ($pilketos->cekLogin()) {
+require_once("lib/user.php");
+if ($user->cekLogin()) {
 	header("location: pemilihan.php");	
 }
 $error = "";
 if (isset($_POST['nis']) && isset($_POST['password'])) {
 	$nis = $_POST['nis'];
 	$password = $_POST['password'];
-	$login = $pilketos->login($nis,$password);
+	$login = $user->login($nis,$password);
 	if ($login) {
 		header("location: pemilihan.php");
 	}
 	else{
-		$error = $pilketos->error();
+		$error = $user->error();
 	}
 }
 

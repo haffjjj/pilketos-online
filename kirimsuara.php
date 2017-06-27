@@ -1,8 +1,8 @@
 <?php
-if (isset($_POST['kanidat'])) {
-	$kanidat = $_POST['kanidat'];
-	require_once('lib/class.php');
-	if ($pemilihan->masukanSuara($kanidat)) {
+if (isset($_POST['id'])) {
+	$id = $_POST['id'];
+	require_once('lib/user.php');
+	if ($pemilihan->masukanSuara($id)) {
 		echo "Suara berhasil dikirim";
 		echo "<p><a href='logout.php'>Logout</a>";
 	}

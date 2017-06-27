@@ -1,6 +1,7 @@
 <?php
-require_once("lib/class.php");
-if (!($pilketos->cekLogin())) {
+require_once("lib/user.php");
+
+if (!($user->cekLogin())) {
 	header("location: index.php");	
 }
 if ($pemilihan->cekpemilih()) {
@@ -26,7 +27,7 @@ if ($pemilihan->cekpemilih()) {
 		// echo "<p>Imgpath : ".$rowKanidat1['imgpath']."</p>";
 		// echo "<p>Visi : ".$rowKanidat1['visi']."</p>";
 		// echo "<p>Misi : ".$rowKanidat1['misi']."</p>";
-		echo "pilih <input type='radio' name='kanidat' value='1'>";
+		echo "pilih <input type='radio' name='id' value='1'>";
 		echo "<hr>";
 
 		$rowKanidat2 = $pemilihan->kanidat(2);
@@ -37,7 +38,7 @@ if ($pemilihan->cekpemilih()) {
 		// echo "<p>Imgpath : ".$rowKanidat2['imgpath']."</p>";
 		// echo "<p>Visi : ".$rowKanidat2['visi']."</p>";
 		// echo "<p>Misi : ".$rowKanidat2['misi']."</p>";
-		echo "pilih <input type='radio' name='kanidat' value='2'>";
+		echo "pilih <input type='radio' name='id' value='2'>";
 		echo "<hr>";
 
 		$rowKanidat3 = $pemilihan->kanidat(3);
@@ -48,7 +49,7 @@ if ($pemilihan->cekpemilih()) {
 		// echo "<p>Imgpath : ".$rowKanidat3['imgpath']."</p>";
 		// echo "<p>Visi : ".$rowKanidat3['visi']."</p>";
 		// echo "<p>Misi : ".$rowKanidat3['misi']."</p>";
-		echo "pilih <input type='radio' name='kanidat' value='3'>";
+		echo "pilih <input type='radio' name='id' value='3'>";
 		echo "<hr>";
 		?>
 		<input type="submit" value="Kirim Suara">
